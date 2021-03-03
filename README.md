@@ -4,15 +4,35 @@
 
 ![Image description](./assets/three_trees.png)
 
-#### Our local repository consists of three main parts maintained by _git_. The first one is our _Working Direcotry_ which holds the actual files that we can change and that are accessible to our IDE. _Working Direcotry_ is basically particular version or snapshot of your project. The second one is the _Index_ which is staging area where changed files are prepared to be commit objects. Files that are commited and files that are in staging area and saved in _.git_ directory. _HEAD_ is the pointer to the current checkout branch and it points to the last commit
+#### This part is important for you to grasp because everything that follows will be easier for you to understand
 
-#### So how these three parts correlates to one another. First when we change some files and do _git status_ it will show as those files painted in red which tells as that there is difference between files in out _Working Directory_ and the files in the _Index_ which are files from particular commit most commonly from the last commit. Next, when we do _git add_ we add those files in staging are which are then ready to be commited. After we commit them that commit object that is created will be a new reference that _HEAD_ is pointing at
+#### There are three main parts that are maintained by _git_. (_.git directory (Repository)_, _Working Directory_ and _staging area_) _Working Direcotry_ holds the actual files that we can change and that are accessible to our IDE. _Working Direcotry_ is basically a particular version or snapshot of your project. _Index_ or staging area (Throughout this book, I will mostly us *Staging Area* term, but you should know that those are the same thing) is an area where changed files are prepared to be next commit objects, you can imagine staging area as a file that *git* uses to keep information about changed files that will be included in your next commit. _.git directory_ is a directory that _git_ uses to store all files that are committed and files that are in the staging area, it is simple key-value data store, whatever you commit _git_ will save it create unique key for it so that you can retrieve it later
+
+#### So how these three parts are connected to one another. Let's see. When we start working on a feature we're starting from let's call it clean state - our *Working Directory* has same files that are tracked by git and that are present in our *.git directory (Repository)*, and our *Staging Area* is clean as well, we know that because git status command will tell us "nothing to commit, working tree clean". Then when we make some change add a new file or change existing file in our *Working Directory* git status will show those changed files painted in red which tell us that there is difference between files in our *Working Directory* and the files in the *Staging Area* which are files from the last commit that we made. Next, when we do git add we add those files to the *Staging Area* which are then ready to be committed. (Whenever you do git add command _git_ will keep track about those changes in *Index* file which is placed inside *.git directory (Repository)*). Later in this guide, I will show you how you can see all these file creations interactively using a few neat tricks in the command line). At this point, git status will tell us that we have some files ready to be committed and our *Working Directory* has files that are different from files in *.git directory (Repository)*. Now to complete this circle we have to commit files that have been changed using git commit command. Once we commit them a new commit object will be created in the *.git directory* and again we will have a clean state between these three parts. To go a bit deeper from here after we commit changes a new commit object is created which will be a new reference that _HEAD_ is pointing at. Now you are probably asking your self what the heck is _HEAD_, it is another thing that is important in the git world
+
+#### _HEAD_ is a `symbolic reference` that points to the tip of the current branch that you are working on. I know it is fuzzy and probably that last sentence doesn't tell you much so I will try to explain it in a simple way. _HEAD_ is a reference that follows you wherever you are in your commit history, If you checkout to different branch _HEAD_ will follow you
 
 ---
 
 **2.** `$ git init`
 
-#### Command for initializing a new empty git repository
+#### This command will create a new subdirectory `.git` inside the current directory that you've created for your project. This subdirectory is important for the _git_ and it is where _git_ stores all important objects and all its references. You can list all the directories and files inside .git directory using ls -la command and see what is in there, later on in the book meaning of some of the files that are present in .git directory will be explained
+
+```bash
+➜  git-basics git init
+Initialized empty Git repository in /Users/nemanjavasic/Documents/git-basics/.git/
+➜  git-basics git:(master) ls -la .git
+total 24
+drwxr-xr-x   9 nemanjavasic  staff  288 Jun 14 13:40 .
+drwxr-xr-x   3 nemanjavasic  staff   96 Jun 14 13:40 ..
+-rw-r--r--   1 nemanjavasic  staff   23 Jun 14 13:40 HEAD
+-rw-r--r--   1 nemanjavasic  staff  137 Jun 14 13:40 config
+-rw-r--r--   1 nemanjavasic  staff   73 Jun 14 13:40 description
+drwxr-xr-x  13 nemanjavasic  staff  416 Jun 14 13:40 hooks
+drwxr-xr-x   3 nemanjavasic  staff   96 Jun 14 13:40 info
+drwxr-xr-x   4 nemanjavasic  staff  128 Jun 14 13:40 objects
+drwxr-xr-x   4 nemanjavasic  staff  128 Jun 14 13:40 refs
+```
 
 ---
 
@@ -30,7 +50,40 @@
 
 **5.** `$ git add`
 
-#### git add is the command for adding files to the staging area. We can use`$ git add .` to add all changed files or we can use`$ git add <path-to-file>` to add specific file to staging area
+### Tracking new changes
+
+#### `git add` is the command for adding new and changed files from the *Working Directory* to the *Staging Area*. One important thing here to understand is that _git add_ will not record any changes to your repository until you do _git commit_.  We can use
+
+`$ git add .`
+
+#### to add all changed and new files, or we can use
+
+`$ git add <path-to-file>`
+
+#### to add a specific file to the staging area
+
+#### or you could also use regex to e.g. add all JavaScript files
+
+`$ git add *.js`
+
+#### Ok, let's see some examples, you remember how I promised that I will show you neat trick in the command line that you can use to see what is happening behind the scene
+
+#### First open two command line windows and go to your project root directory in both terminals, then execute this script in one of them
+
+`$ while; do; clear; tree .git; sleep 1; done;`
+
+#### This is simple shell loop that will clear the screen, run `tree .git` command, wait for one second and repeat the process
+
+#### Now assuming that you have newly initialized git repository you will see that _git_ repository tree is being displayed and cleared every second. Now if you, for example, add README.md file
+
+`$ git add README.md`
+
+#### you will see that new file called `index` was created, so what you've seen there is `README.md` file being added to the staging area and that is where _git_ is keeping information on all staged files
+
+#### Next if you go further and commit that change you will see that a new directory has been created inside objects directory and also a new file with some hash as its name has been created. That file is the _git commit object_ and its hash name is unique SHA-1 that contains metadata on the commit that you've created. You can examine the content of the _git_ object by using `git cat-file -p <commit-hash>` command
+
+![git](assets/git-add.gif)
+![git](assets/git-cat-file.gif)
 
 ---
 
@@ -64,13 +117,7 @@
 
 ---
 
-**9.** `$ git rm --cached <path-to-the-file>`
-
-#### This is useful command when we are in situation where we have files in staging area and we don't wont to include it into our commit
-
----
-
-**10.** `$ git clean`
+**9.** `$ git clean`
 
 #### `git clean` is the command for deleting untracked files from our working directory
 
@@ -80,7 +127,7 @@
 
 ---
 
-**11.** `$ git branch`
+**10.** `$ git branch`
 
 #### git branch is command for working with Git branches
 
@@ -96,25 +143,37 @@
 
 ---
 
-**12.** `$ git checkout`
+**11.** `$ git checkout`
 
-#### `git checkout` is the command for switching branches or restoring working tree files
+#### This is a command that you can use with files, commit objects and branches. It is commonly used for switching between branches, but you can use it also to discard changes in your working directory. When you use it to switch to different branch _git_ will update all files in your Working Directory to match the files that are present in that particular version of your application stored in the branch you switching to. When you checkout to the specific commit object then you're in detached HEAD mode - this is explained in Git basic Three Trees workflow section of the book. And when you use git checkout to checkout file _git_ will discard all unstaged changes to that file
 
-`$ git checkout -b <branch-name>` - `-b` is for create new branch and then checkout to that branch
+#### to checkout to a different branch
 
-`$ git checkout -- .` - usefull command to discard all changes made in all files, we can use `git checkout -- <file-name>` to discard changes in specific file
+`$ git checkout <branch-name>`
 
-`$ git checkout -` - useful command for switching to last checked out branch
+#### `-b` is a convenient option that lets as to create a new branch and then checkout to that branch
+
+`$ git checkout -b <branch-name>`
+
+#### Here are a few tips that you can use and that can speed up your every day work with _git_
+
+#### Useful command to discard all changes made in all files
+
+`$ git checkout -- .`
+
+#### Useful command for switching to last checked out branch
+
+`$ git checkout -`
 
 ---
 
-**13.** `$ git fetch`
+**12.** `$ git fetch`
 
 #### `git fetch` is command that downloads commits, branches, files from remote repository in our local repo, but it will not update our local repository state leaving our current work intact
 
 ---
 
-**14.** `$ git merge`
+**13.** `$ git merge`
 
 #### `git merge` is command for integrating changes that have been made in remote or local branch into your current branch by creating new `merge commit`
 
@@ -122,39 +181,35 @@
 
 #### There are several merge strategies but two main merge strateegies are `Fast Forward` and `Recursive Merge`
 
-**14.1.** **_Fast Forward_**
+**13.1.** Fast Forward
 
-#### With `Fast Forward` merge git history is straight line without extra merge commit. This strategies is default one (when possible) and it happens when you create new branch make some commits on that branch and by the time you are ready to merge those commits there is no commits on master.
+#### With `Fast Forward` merge git history is a straight line without the need for a new merge commit. This strategy is the default one (but only when possible). Fast Forward strategy occurs in the case when you create a new branch e.g. `feature` from `master` branch and you make a few commits on `feature` branch, and by the time you are ready to merge those commits into `master` there is no any new commits on `master` branch and all that _git_ has to do is to move the HEAD pointer forward to the target branch. Let's see this on the image bellow
 
-![Image description](./assets/before-after-merge.png)
+![Fast Forward Merge](./assets/ff-merge.png)
 
-**14.2.** **_Recursive merge_**
+#### Lets see what is happening in `git log` using this cool script `git-log.sh`
 
-#### Recursive occurs when there is no linear path between the branches.If you've created a feature branch from the master branch, you made some new commits and now you want to merge it. But, the difference is that in meantime, someone updated the master. So, in order to merge the branches, Git has to create a new commit in which the changes are combined. At this moment, a conflict can occur. Conflicts occur when both of the branches changed a same block of code and Git needs your help to put the changes together
+![git](assets/git-ff.gif) Thanks `Max Maintz` for providing this cool script
 
-**14.3** **_git merge --squash_**
+**13.2.** Recursive merge
 
-#### _squash_ merging is merge option that gives as a way to put together all commits made on some branch into single commit
+#### Recursive merge strategy occurs when there is no linear path between the branches. This can happen if you've created a `feature` branch from the `master` branch, you've made some new commits and now you want to merge it into `master`. But, the difference is that in the meantime, someone updated the `master` branch and created some new commits there. Now, in order to merge the branches, __git__ has to combine changes into a new commit
 
-`$ git checkout master`
+![Recursive merge](./assets/recursive-merge.png)
 
-`$ git merge --squash <branch-name>`
+#### Now look how new commit is created when there is no linear path between the branches
 
-`$ git commit`
-
-This will take all the commits from the _branch-name_ branch, and add them to a single commit on the _master_ branch
-
-![Image description](./assets/no-ff-merge.png)
+![git](assets/recursive.gif)
 
 ---
 
-**15.** `$ git pull`
+**14.** `$ git pull`
 
 #### `git pull` is the command that is used to fetch content from remote repository and immediately update our local repository. It is combination of `git fetch` and `git merge`
 
 ---
 
-**16.** `$ git push`
+**15.** `$ git push`
 
 #### `git push` is the command for uploading local changes that we have made to a remote repositiry
 
@@ -166,7 +221,7 @@ This will take all the commits from the _branch-name_ branch, and add them to a 
 
 ---
 
-**17.** `Pull Requests`
+**16.** `Pull Requests`
 
 _Example_:
 53 - Add RookieService to handle all checks and calculation related to rookie
@@ -183,7 +238,7 @@ To test, set employment date to less than 6 months and try to add request view d
 
 ---
 
-**18.** `$ git stash`
+**17.** `$ git stash`
 
 #### `git stash` command offers us option to temporarily store our uncommitted local changes, and switch to work on another branch
 
@@ -201,7 +256,7 @@ To test, set employment date to less than 6 months and try to add request view d
 
 ---
 
-**19.** `$ git log`
+**18.** `$ git log`
 
 #### `$ git log` is command that allows as to review and to read history of all commits that are made in repository
 
@@ -217,7 +272,7 @@ To test, set employment date to less than 6 months and try to add request view d
 
 ---
 
-**20.** `$ git reset`
+**19.** `$ git reset`
 
 #### `git reset` is command for undoing changes. There is three forms of git reset, `--soft`, `--mixed`, `--hard`
 
@@ -226,6 +281,12 @@ To test, set employment date to less than 6 months and try to add request view d
 `$ git reset --mixed HEAD^` => will reset the last commit so that all changed files are preserved but not marked for commit (not in staging area). This is default git reset option
 
 `$ git reset --hard HEAD^` => will completely remove last commit and all changes will be discarded
+
+---
+
+**20.** `$ git revert`
+
+#### Another command that is used for undoing changes is `git revert` and this command creates a new commit which reverts commit that you've specified in the command, so you can probably notice a difference here between `git reset` command which moves HEAD and branch ref pointers, and `git revert` which creates a new revert commit, this also means that this command will not change project history which makes it safe operation for undoing changes.
 
 ---
 
