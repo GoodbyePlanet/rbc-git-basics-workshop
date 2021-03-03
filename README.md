@@ -2,7 +2,7 @@
 
 **1.** `Git basic Three Trees workflow`
 
-![Image description](./assets/git-workflow.png)
+![Image description](./assets/three_trees.png)
 
 #### Our local repository consists of three main parts maintained by _git_. The first one is our _Working Direcotry_ which holds the actual files that we can change and that are accessible to our IDE. _Working Direcotry_ is basically particular version or snapshot of your project. The second one is the _Index_ which is staging area where changed files are prepared to be commit objects. Files that are commited and files that are in staging area and saved in _.git_ directory. _HEAD_ is the pointer to the current checkout branch and it points to the last commit
 
