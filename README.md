@@ -292,7 +292,28 @@ To test, set employment date to less than 6 months and try to add request view d
 
 ---
 
-**21.** `$ git reflog`
+**21.** `Alias`
+#### git aliases that are really useful
+
+```bash
+git config --global alias.st status
+
+git config --global alias.sts `status --short --branch`
+
+git config --global alias.unstage 'reset HEAD --'
+
+git config --global alias.undo 'reset HEAD~1 --mixed'
+
+git config --global alias.co checkout
+
+git config --global alias.cob 'checkout -b'
+
+git config --global alias.br branch
+```
+
+---
+
+**22.** `$ git reflog`
 
 #### Reflog is just the log of all changes that you've made (Git keeps this logs 90 days by default)
 
