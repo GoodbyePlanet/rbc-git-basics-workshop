@@ -1,0 +1,1 @@
+Fix Footer.js
