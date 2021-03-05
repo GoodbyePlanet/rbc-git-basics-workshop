@@ -107,6 +107,8 @@ drwxr-xr-x   4 nemanjavasic  staff  128 Jun 14 13:40 refs
 
 <https://gist.github.com/julienbourdeau/e605e4b8b47da97c249a0f72598529c8>
 
+<https://chris.beams.io/posts/git-commit/>
+
 ---
 
 **8.** `$ git commit --amend`
